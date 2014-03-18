@@ -22,5 +22,9 @@ A command line tool (and JavaScript library) for querying seat availability from
     # output json
     ./bin/flightit --queryDate 2014-04-15 TPE LHR --json
 
+    # poorman's monitor for I class on LA flights from SYD to SCL
+    % while true;  do (date && ./bin/flightit --queryDate 2014-04-26 --queryDate 2014-04-27 SYD SCL) | tee -a output.log; sleep 300; done
+    % tail -f output.log |grep --line-buffered ' LA.* I[1-9]' | sed -l 's/.*/"&"/'  | xargs -L1 terminal-notifier -title 'flightit' -sound default -message
+
 ## License
 [MIT](http://clkao.mit-license.org)
