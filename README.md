@@ -19,5 +19,8 @@ A command line tool (and JavaScript library) for querying seat availability from
     # multiple dates
     ./bin/flightit --queryDate 2014-04-15 --queryDate 2014-04-16 TPE SCL
 
+    # output json
+    ./bin/flightit --queryDate 2014-04-15 TPE LHR --json
+
 ## License
 [MIT](http://clkao.mit-license.org)

@@ -9,7 +9,7 @@ iatatz = {}
 .on 'error' -> console.log \err it
 .on 'end'
 
-{query-date, connection, direct, _: argv} = optimist.argv
+{query-date, connection, direct, json, _: argv} = optimist.argv
 [departure, arrival] = argv
 
 query-date = [query-date] unless \Array is typeof! query-date
@@ -17,6 +17,8 @@ throw "query-date required" unless query-date
 throw "departure and arrival required" unless departure and arrival
 
 require! async
+
+by-dates = {}
 
 funcs = for let query-date in query-date => (done) ->
   all-flights <- flightit.get-seats {departure, arrival, connection, query-date} <<< do
@@ -29,6 +31,8 @@ funcs = for let query-date in query-date => (done) ->
     console.log \err
     return done!
 
+  by-dates[query-date] = all-flights
+  return done! if json
   for fn, {cabins,depCode,arrCode,arrTimeMS,depTimeMS,arrTime,depTime} of all-flights
     if direct and (depCode isnt departure or arrCode isnt arrival)
       continue
@@ -38,3 +42,6 @@ funcs = for let query-date in query-date => (done) ->
     console.log "#{dep.format 'DDMMM' .to-upper-case!} #{sprintf("%-6s", fn)} #{depCode}(#{dep.format 'HHmm'}) #{arrCode}(#{arr.format 'HHmm'}) " + cabin-summary
   done!
 <- async.series funcs
+
+if json
+  console.log JSON.stringify by-dates, null 4
